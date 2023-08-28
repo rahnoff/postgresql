@@ -1,0 +1,23 @@
+[Unit]
+Description=PostgreSQL database server
+Documentation=https://www.postgresql.org/docs
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=postgres
+Group=postgres
+ExecStart=/usr/local/pgsql/bin/postgres \
+          -c data_directory=/var/lib/postgresql \
+          -c config_file=/etc/postgresql/postgresql.conf \
+          -c hba_file=/etc/postgresql/pg_hba.conf \
+          -c ident_file=/etc/postgresql/pg_ident.conf
+ExecReload=/bin/kill -HUP $MAINPID
+StandardOutput=append:/var/log/postgresql/postgresql-logs.txt
+KillMode=mixed
+KillSignal=SIGINT
+TimeoutSec=infinity
+
+[Install]
+WantedBy=multi-user.target

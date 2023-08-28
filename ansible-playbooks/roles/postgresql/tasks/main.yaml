@@ -1,0 +1,81 @@
+- name: Create a PostgreSQL user
+  ansible.builtin.user:
+    name: postgres
+    comment: PostgreSQL user
+    create_home: true
+    shell: /bin/bash
+
+- name: Copy a pgsql archive to a host
+  ansible.builtin.copy:
+    src: pgsql.tar.gz
+    dest: /tmp
+
+- name: Extract an archive
+  ansible.builtin.unarchive:
+    src: /tmp/pgsql.tar.gz
+    dest: /usr/local
+    remote_src: yes
+
+- name: Create PostgreSQL configs, data and logs directories
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - /etc/postgresql
+    - /var/lib/postgresql
+    - /var/log/postgresql
+
+- name: Change an ownership of PostgreSQL directories and files
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: postgres
+    group: postgres
+  loop:
+    - /var/lib/postgresql
+    - /var/log/postgresql
+
+- name: Initialize a PostgreSQL data directory
+  ansible.builtin.command: /usr/local/pgsql/bin/initdb -D /var/lib/postgresql
+  become: true
+  become_method: sudo
+  become_user: postgres
+  vars:
+    allow_world_readable_tmpfiles: true
+    pipelining: true
+  ignore_errors: true
+
+- name: Copy config files to a config directory
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: /etc/postgresql
+    remote_src: yes
+  loop:
+    - /var/lib/postgresql/postgresql.conf
+    - /var/lib/postgresql/pg_hba.conf
+    - /var/lib/postgresql/pg_ident.conf
+
+- name: Remove config files from a data directory
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: absent
+  loop:
+    - /var/lib/postgresql/postgresql.conf
+    - /var/lib/postgresql/pg_hba.conf
+    - /var/lib/postgresql/pg_ident.conf
+
+- name: Copy a PostgreSQL systemd unit file
+  ansible.builtin.copy:
+    src: postgresql.service
+    dest: /etc/systemd/system
+
+- name: Reread systemd configs
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Start and enable PostgreSQL
+  ansible.builtin.systemd:
+    name: postgresql
+    state: started
+    enabled: true
+    masked: no

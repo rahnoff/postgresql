@@ -1,0 +1,3 @@
+postgresql:
+  hosts:
+    postgresql-[1:2]-dev.abcd.com

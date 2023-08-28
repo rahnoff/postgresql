@@ -4,13 +4,10 @@ docker image build -t postgresql-binaries-all .
 
 echo -e "\n"
 
-echo -e "Copying pgsql directory and oid2name\n"
+echo -e "Copying pgsql directory"
 
 docker container cp $(docker container create \
-postgresql-binaries-all:latest):/usr/local/pgsql .
-
-docker container cp $(docker container create \
-postgresql-binaries-all:latest):/src/contrib/oid2name/oid2name .
+       postgresql-binaries-all:latest):/usr/local/pgsql .
 
 echo -e "\n"
 

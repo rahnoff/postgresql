@@ -1,0 +1,11 @@
+FROM rockylinux:8-minimal
+WORKDIR /src
+RUN dnf update && dnf install -y curl gcc make \
+    libreadline-dev libsystemd-dev zlib1g-dev
+RUN curl -O https://ftp.postgresql.org/pub/source/v12.0/postgresql-12.0.tar.gz \
+         -O https://ftp.postgresql.org/pub/source/v12.0/postgresql-12.0.tar.gz.md5
+RUN md5sum -c postgresql-12.0.tar.gz.md5
+RUN gzip -d postgresql-12.0.tar.gz
+RUN tar -xvf postgresql-12.0.tar
+RUN postgresql-12.0/configure --with-systemd
+RUN make world && make install-world

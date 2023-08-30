@@ -11,12 +11,12 @@
 
 - name: Copy PgBouncer binary to a directory for binaries
   ansible.builtin.copy:
-    src: /tmp/pgbouncer/pgbouncer
+    src: /tmp/pgbouncer
     dest: /usr/local/bin
     mode: '0755'
     remote_src: yes
 
-- name: Create PgBouncer config, logs and pid-file directories
+- name: Create PgBouncer config, log and pid-file directories
   ansible.builtin.file:
     path: '{{ item }}'
     state: directory
@@ -35,7 +35,7 @@
     - /var/log/pgbouncer
     - /var/run/pgbouncer
 
-- name: Copy Prometheus config and systemd unit files
+- name: Copy PgBouncer config and systemd unit files
   ansible.builtin.copy:
     src: '{{ item.src }}'
     dest: '{{ item.dest }}'

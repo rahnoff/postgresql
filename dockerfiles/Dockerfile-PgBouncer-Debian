@@ -1,0 +1,10 @@
+FROM debian:bullseye-slim@sha256:0781db7f3f74866059cf161d145af0bc16fb13493b6e0f87ca20d7e34498d691
+WORKDIR /src
+RUN apt update && apt install -y build-essential curl \
+    pkg-config libc-ares-dev libc-ares2 \
+    libevent-dev libssl-dev
+RUN curl -O https://www.pgbouncer.org/downloads/files/1.20.0/pgbouncer-1.20.0.tar.gz
+RUN gzip -d pgbouncer-1.20.0.tar.gz
+RUN tar -xvf pgbouncer-1.20.0.tar
+RUN pgbouncer-1.20.0/configure --prefix=/usr/local
+RUN make && make install

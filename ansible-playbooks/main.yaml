@@ -2,4 +2,5 @@
 
 - hosts: postgresql
   roles:
-    - postgresql
+#    - postgresql
+    - pgbouncer

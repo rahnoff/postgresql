@@ -16,7 +16,7 @@
     dest: /usr/local
     remote_src: yes
 
-- name: Create PostgreSQL configs, data and logs directories
+- name: Create PostgreSQL config, data and log directories
   ansible.builtin.file:
     path: '{{ item }}'
     state: directory
@@ -54,6 +54,7 @@
     - /var/lib/postgresql/postgresql.conf
     - /var/lib/postgresql/pg_hba.conf
     - /var/lib/postgresql/pg_ident.conf
+  ignore_errors: true
 
 - name: Remove config files from a data directory
   ansible.builtin.file:

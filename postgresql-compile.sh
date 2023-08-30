@@ -16,6 +16,8 @@ gzip pgsql.tar
 
 mv pgsql.tar.gz ansible-playbooks/roles/postgresql/files
 
+rm -rf pgsql
+
 echo -e "\n"
 
 echo -e "Removing a container\n"

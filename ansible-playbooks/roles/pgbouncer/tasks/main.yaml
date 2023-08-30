@@ -9,12 +9,20 @@
     dest: /tmp
     remote_src: yes
 
-- name: Copy PgBouncer binary to a directory for binaries
+- name: Copy PgBouncer binary and libraries to respective directories
   ansible.builtin.copy:
-    src: /tmp/pgbouncer
-    dest: /usr/local/bin
-    mode: '0755'
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
     remote_src: yes
+  loop:
+    - { src: '/tmp/pgbouncer', dest: '/usr/local/bin' }
+    - { src: '/tmp/libcares.so.2', dest: '/usr/lib/x86_64-linux-gnu' }
+    - { src: '/tmp/libevent-2.1.so.7', dest: '/usr/lib/x86_64-linux-gnu' }
+
+- name: Change a PgBouncer binary's mode
+  ansible.builtin.file:
+    path: /usr/local/bin/pgbouncer
+    mode: '0755' 
 
 - name: Create PgBouncer config, log and pid-file directories
   ansible.builtin.file:

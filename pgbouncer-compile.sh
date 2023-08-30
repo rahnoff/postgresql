@@ -24,6 +24,8 @@ gzip pgbouncer.tar
 
 mv pgbouncer.tar.gz ansible-playbooks/roles/pgbouncer/files
 
+rm -rf pgbouncer libcares.so.2 libevent-2.1.so.7
+
 echo -e "\n"
 
 echo -e "Removing a container\n"

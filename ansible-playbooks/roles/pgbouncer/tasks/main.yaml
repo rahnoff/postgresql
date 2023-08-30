@@ -1,0 +1,56 @@
+- name: Copy pgbouncer archive to a host
+  ansible.builtin.copy:
+    src: pgbouncer.tar.gz
+    dest: /tmp
+
+- name: Extract an archive
+  ansible.builtin.unarchive:
+    src: /tmp/pgbouncer.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: Copy PgBouncer binary to a directory for binaries
+  ansible.builtin.copy:
+    src: /tmp/pgbouncer/pgbouncer
+    dest: /usr/local/bin
+    mode: '0755'
+    remote_src: yes
+
+- name: Create PgBouncer config, logs and pid-file directories
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - /etc/pgbouncer
+    - /var/log/pgbouncer
+    - /var/run/pgbouncer
+
+- name: Change an ownership of PgBouncer directories
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: postgres
+    group: postgres
+  loop:
+    - /var/log/pgbouncer
+    - /var/run/pgbouncer
+
+- name: Copy Prometheus config and systemd unit files
+  ansible.builtin.copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  loop:
+    - { src: 'pgbouncer.ini', dest: '/etc/pgbouncer' }
+    - { src: 'userlist.txt', dest: '/etc/pgbouncer' }
+    - { src: 'pgbouncer.service', dest: '/etc/systemd/system' }
+
+- name: Reread systemd configs
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Start and enable PgBouncer
+  ansible.builtin.systemd:
+    name: pgbouncer
+    state: started
+    enabled: true
+    masked: no

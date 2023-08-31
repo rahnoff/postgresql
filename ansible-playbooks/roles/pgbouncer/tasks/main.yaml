@@ -24,14 +24,14 @@
     path: /usr/local/bin/pgbouncer
     mode: '0755' 
 
-- name: Create PgBouncer config, log and pid-file directories
+- name: Create PgBouncer config, data and log directories
   ansible.builtin.file:
     path: '{{ item }}'
     state: directory
   loop:
     - /etc/pgbouncer
+    - /var/lib/pgbouncer
     - /var/log/pgbouncer
-    - /var/run/pgbouncer
 
 - name: Change an ownership of PgBouncer directories
   ansible.builtin.file:
@@ -40,8 +40,8 @@
     owner: postgres
     group: postgres
   loop:
+    - /var/lib/pgbouncer
     - /var/log/pgbouncer
-    - /var/run/pgbouncer
 
 - name: Copy PgBouncer config and systemd unit files
   ansible.builtin.copy:

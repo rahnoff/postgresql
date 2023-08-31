@@ -10,6 +10,8 @@ User=postgres
 Group=postgres
 ExecStart=/usr/local/bin/pgbouncer /etc/pgbouncer/pgbouncer.ini
 ExecReload=/bin/kill -HUP $MAINPID
+StandardOutput=append:/var/log/pgbouncer/pgbouncer.log
+PIDFile=/run/pgbouncer/pgbouncer.pid
 KillSignal=SIGINT
 
 [Install]

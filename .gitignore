@@ -1,2 +1,2 @@
-ansible-playbooks/roles/postgresql/files/pgsql.tar.gz
 ansible-playbooks/roles/pgbouncer/files/pgbouncer.tar.gz
+ansible-playbooks/roles/postgresql/files/postgresql.tar.gz

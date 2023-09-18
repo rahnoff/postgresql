@@ -8,15 +8,19 @@ echo -e "\n"
 echo -e "Copying pgsql directory"
 
 docker container cp $(docker container create --name postgresql \
-       postgresql-binaries-all:latest):/usr/local/pgsql .
+       postgresql-binaries-all:latest):/usr/local/postgresql .
 
-tar -cvf pgsql.tar pgsql
+#echo "Renaming pgsql to postgresql"
 
-gzip pgsql.tar
+#mv pgsql postgresql
 
-mv pgsql.tar.gz ansible-playbooks/roles/postgresql/files
+tar -cvf postgresql.tar postgresql
 
-rm -rf pgsql
+gzip postgresql.tar
+
+mv postgresql.tar.gz ansible-playbooks/roles/postgresql/files
+
+rm -rf postgresql
 
 echo -e "\n"
 

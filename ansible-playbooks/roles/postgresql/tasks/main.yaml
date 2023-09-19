@@ -43,12 +43,11 @@
   vars:
     allow_world_readable_tmpfiles: true
     pipelining: true
-  #ignore_errors: true
-  register: command_result
+  register: initdb_result
   failed_when: "'initdb: error: directory \"/var/lib/postgresql\" exists but is not empty
                  If you want to create a new database system, either remove or empty
                  the directory \"/var/lib/postgresql\" or run initdb
-                 with an argument other than \"/var/lib/postgresql\"' in command_result.stderr"
+                 with an argument other than \"/var/lib/postgresql\"' in initdb_result.stderr"
 
 - name: Copy config files to a config directory
   ansible.builtin.copy:

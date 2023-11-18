@@ -5,14 +5,10 @@ docker image build -f dockerfiles/Dockerfile-PostgreSQL-Debian \
 
 echo -e "\n"
 
-echo -e "Copying pgsql directory"
+echo -e "Copying postgresql directory"
 
 docker container cp $(docker container create --name postgresql \
        postgresql-binaries-all:latest):/usr/local/postgresql .
-
-#echo "Renaming pgsql to postgresql"
-
-#mv pgsql postgresql
 
 tar -cvf postgresql.tar postgresql
 

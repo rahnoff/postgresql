@@ -2,19 +2,12 @@
   ansible.builtin.user:
     name: postgres
     comment: PostgreSQL user
-    create_home: true
     shell: /bin/bash
-
-- name: Copy a PostgreSQL archive to a host
-  ansible.builtin.copy:
-    src: postgresql.tar.gz
-    dest: /tmp
 
 - name: Extract an archive
   ansible.builtin.unarchive:
-    src: /tmp/postgresql.tar.gz
+    src: postgresql.tar.gz
     dest: /usr/local
-    remote_src: yes
 
 - name: Create PostgreSQL config, data and log directories
   ansible.builtin.file:
@@ -36,10 +29,10 @@
     - /var/log/postgresql
 
 - name: Initialize a PostgreSQL data directory
-  ansible.builtin.command: /usr/local/postgresql/bin/initdb -D /var/lib/postgresql
   become: true
   become_method: sudo
   become_user: postgres
+  ansible.builtin.command: /usr/local/postgresql/bin/initdb -D /var/lib/postgresql
   vars:
     allow_world_readable_tmpfiles: true
     pipelining: true
@@ -75,12 +68,12 @@
     dest: /etc/systemd/system
 
 - name: Reread systemd configs
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     daemon_reload: true
 
 - name: Start and enable PostgreSQL
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: postgresql
     state: started
     enabled: true
-    masked: no
+    masked: true

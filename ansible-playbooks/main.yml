@@ -3,4 +3,5 @@
 - hosts: postgresql
   roles:
     - postgresql
+    - pgtune
     - pgbouncer

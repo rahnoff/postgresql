@@ -1,28 +1,16 @@
-- name: Copy pgbouncer archive to a host
-  ansible.builtin.copy:
-    src: pgbouncer.tar.gz
-    dest: /tmp
-
 - name: Extract an archive
   ansible.builtin.unarchive:
-    src: /tmp/pgbouncer.tar.gz
-    dest: /tmp
-    remote_src: yes
+    src: pgbouncer.tar.gz
+    dest: /usr/local/bin
 
-- name: Copy PgBouncer binary and libraries to respective directories
+- name: Move PgBouncer libraries to a respective directory
   ansible.builtin.copy:
     src: '{{ item.src }}'
     dest: '{{ item.dest }}'
     remote_src: yes
   loop:
-    - { src: '/tmp/pgbouncer', dest: '/usr/local/bin' }
-    - { src: '/tmp/libcares.so.2', dest: '/usr/lib/x86_64-linux-gnu' }
-    - { src: '/tmp/libevent-2.1.so.7', dest: '/usr/lib/x86_64-linux-gnu' }
-
-- name: Change a PgBouncer binary's mode
-  ansible.builtin.file:
-    path: /usr/local/bin/pgbouncer
-    mode: '0755' 
+    - { src: '/usr/local/bin/libcares.so.2', dest: '/usr/lib/x86_64-linux-gnu' }
+    - { src: '/usr/local/bin/libevent-2.1.so.7', dest: '/usr/lib/x86_64-linux-gnu' } 
 
 - name: Create PgBouncer config, data and log directories
   ansible.builtin.file:
@@ -53,12 +41,12 @@
     - { src: 'pgbouncer.service', dest: '/etc/systemd/system' }
 
 - name: Reread systemd configs
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     daemon_reload: true
 
 - name: Start and enable PgBouncer
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: pgbouncer
     state: started
     enabled: true
-    masked: no
+    masked: true

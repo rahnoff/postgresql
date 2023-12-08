@@ -1,0 +1,27 @@
+---
+
+- name: Increase an LVM partition
+  hosts: debian
+  tasks:
+  - name: Create a partition
+    community.general.parted:
+      device: /dev/sdc
+      flags: [ lvm ]
+      fs_type: ext4
+      label: msdos
+      number: 1
+      part_end: 1GiB
+      part_start: 1MiB
+      part_type: primary
+      state: present
+  - name: Increase an LVM volume group
+    community.general.lvg:
+      vg: vgdata
+      pvs: /dev/sda1,/dev/sdc1
+  - name: Increase an LVM logical volume
+    community.general.lvol:
+      vg: vgdata
+      lv: var
+      size: +100%FREE
+      resizefs: true
+      

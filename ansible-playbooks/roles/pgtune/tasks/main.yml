@@ -3,8 +3,8 @@
   become_method: sudo
   become_user: postgres
   community.postgresql.postgresql_set:
-    name: "{{ item.name }}"
-    value: "{{ item.value }}"
+    name: '{{ item.name }}'
+    value: '{{ item.value }}'
     connect_params:
       host: /tmp
   loop:

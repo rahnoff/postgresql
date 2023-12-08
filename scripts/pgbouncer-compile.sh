@@ -1,6 +1,6 @@
 echo -e "Compiling PgBouncer 1.20.0\n"
 
-docker image build -f dockerfiles/Dockerfile-PgBouncer-Debian \
+docker image build -f ../dockerfiles/PgBouncer-Debian \
                    -t pgbouncer .
 
 echo -e "\n"
@@ -22,7 +22,7 @@ tar -cvf pgbouncer.tar pgbouncer libcares.so.2 libevent-2.1.so.7
 
 gzip pgbouncer.tar
 
-mv pgbouncer.tar.gz ansible-playbooks/roles/pgbouncer/files
+mv pgbouncer.tar.gz ../ansible-playbooks/roles/pgbouncer/files
 
 rm -rf pgbouncer libcares.so.2 libevent-2.1.so.7
 

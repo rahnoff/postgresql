@@ -1,6 +1,6 @@
 echo -e "Compiling PostgreSQL 12\n"
 
-docker image build -f dockerfiles/Dockerfile-PostgreSQL-Debian \
+docker image build -f ../dockerfiles/PostgreSQL-Debian \
                    -t postgresql-binaries-all .
 
 echo -e "\n"
@@ -14,7 +14,7 @@ tar -cvf postgresql.tar postgresql
 
 gzip postgresql.tar
 
-mv postgresql.tar.gz ansible-playbooks/roles/postgresql/files
+mv postgresql.tar.gz ../ansible-playbooks/roles/postgresql/files
 
 rm -rf postgresql
 

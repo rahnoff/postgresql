@@ -1,9 +1,14 @@
-# PostgreSQL and PgBouncer installation
+# PostgreSQL with PgTune and PgBouncer installation
 
-Tested on Debian, `acl` should be installed on remote machines
+Intended for an offline setting up, tested on Debian 11. `acl` and<br>
+`psycopg2-binary` should be installed on remote machines. All components,<br>
+except PgTune, are compiled from source within Docker<br>
 
-## How to run
+## 1 How to run
 
-Bash scripts in `scripts` directory compile binaries and place them to<br>
-appropriate folders in `ansible-playbooks` directory. Then a playbook<br>
-can be started.
+On a machine with Internet link and Docker commence with Bash scripts<br>
+from `scripts` directory in the following order:<br>
+- `bash postgresql-compile.sh`<br>
+- `bash pgbouncer-compile.sh`<br>
+That compiles binaries and places them into appropriate folders<br>
+in `ansible-playbooks` directory as tarballs. Then a playbook can be started

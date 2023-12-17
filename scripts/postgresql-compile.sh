@@ -1,7 +1,18 @@
-echo -e "Compiling PostgreSQL 12\n"
+if [ "$#" -lt 2 ]
+then
+	echo "Usage: `basename $0` Debian 12 or `basename $0` RHEL 14"
+	echo -e "Debian or RHEL - Linux flavor, 12 or 14 - PostgreSQL version"
+	exit 1
+fi
 
-docker image build -f ../dockerfiles/PostgreSQL-Debian \
-                   -t postgresql-binaries-all .
+flavor="$1"
+version="$2"
+
+echo -e "Compiling PostgreSQL $version\n"
+
+docker image build --build-arg version="$version" \
+                   -f ../dockerfiles/PostgreSQL-$flavor \
+                   -t postgresql-binaries-all:latest .
 
 echo -e "\n"
 

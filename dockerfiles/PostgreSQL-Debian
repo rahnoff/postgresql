@@ -1,11 +1,18 @@
-FROM debian:bullseye-slim@sha256:0781db7f3f74866059cf161d145af0bc16fb13493b6e0f87ca20d7e34498d691
+FROM debian:11-slim@sha256:9af4db29e828a4d08c7819f9e0972e2dbdac575e73c6438630c83bd79f49c8aa
+ARG version=12
 WORKDIR /src
 RUN apt update && apt install -y build-essential curl \
     libreadline-dev zlib1g-dev
-RUN curl -O https://ftp.postgresql.org/pub/source/v12.0/postgresql-12.0.tar.gz \
-         -O https://ftp.postgresql.org/pub/source/v12.0/postgresql-12.0.tar.gz.md5
-RUN md5sum -c postgresql-12.0.tar.gz.md5
-RUN gzip -d postgresql-12.0.tar.gz
-RUN tar -xvf postgresql-12.0.tar
-RUN postgresql-12.0/configure --prefix=/usr/local/postgresql
-RUN make world && make install-world
+RUN curl -O https://ftp.postgresql.org/pub/source/v$version.0/postgresql-$version.0.tar.gz \
+         -O https://ftp.postgresql.org/pub/source/v$version.0/postgresql-$version.0.tar.gz.md5
+RUN md5sum -c postgresql-$version.0.tar.gz.md5 \
+    && gzip -d postgresql-$version.0.tar.gz \
+    && tar -xvf postgresql-$version.0.tar
+WORKDIR /src/postgresql-$version.0
+RUN ./configure --prefix=/usr/local/postgresql && make world \
+    && make install-world
+# RUN gzip -d postgresql-12.0.tar.gz
+# RUN tar -xvf postgresql-12.0.tar
+# WORKDIR /src/postgresql-12.0
+# RUN ./configure --prefix=/usr/local/postgresql
+# RUN make world && make install-world

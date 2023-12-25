@@ -8,9 +8,13 @@ RUN curl -O https://ftp.postgresql.org/pub/source/v$version.0/postgresql-$versio
 RUN md5sum -c postgresql-$version.0.tar.gz.md5 \
     && gzip -d postgresql-$version.0.tar.gz \
     && tar -xvf postgresql-$version.0.tar
-WORKDIR /src/postgresql-$version.0
-RUN ./configure --prefix=/usr/local/postgresql && make world \
-    && make install-world
+RUN postgresql-$version.0/configure --prefix=/usr/local/postgresql \
+    && make world && make install-world
+RUN groupadd -r initializer && useradd -g initializer -rM \
+    -s /bin/false initializer && mkdir /var/lib/postgresql && \
+    chown initializer:initializer /var/lib/postgresql
+USER initializer:initializer
+RUN /usr/local/postgresql/bin/initdb -D /var/lib/postgresql
 # RUN gzip -d postgresql-12.0.tar.gz
 # RUN tar -xvf postgresql-12.0.tar
 # WORKDIR /src/postgresql-12.0

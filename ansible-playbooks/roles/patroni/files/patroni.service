@@ -1,0 +1,20 @@
+[Unit]
+After=network-online.target
+Description=Runners to orchestrate a high-availability PostgreSQL
+Documentation=https://www.postgresql.org/docs
+Wants=network-online.target
+
+[Service]
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/bin/patroni /etc/patroni.yml
+Group=postgres
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+StandardOutput=append:/var/log/patroni.log
+TimeoutSec=30
+Type=simple
+User=postgres
+
+[Install]
+WantedBy=multi-user.target

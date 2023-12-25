@@ -1,0 +1,79 @@
+- name: Create a PostgreSQL user
+  ansible.builtin.user:
+    name: postgres
+    comment: PostgreSQL user
+    shell: /bin/bash
+
+- name: Extract an archive
+  ansible.builtin.unarchive:
+    src: postgresql.tar.gz
+    dest: /usr/local
+
+- name: Create PostgreSQL config, data and log directories
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - /etc/postgresql
+    - /var/lib/postgresql
+    - /var/log/postgresql
+
+- name: Change an ownership of PostgreSQL directories and files
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: postgres
+    group: postgres
+  loop:
+    - /var/lib/postgresql
+    - /var/log/postgresql
+
+- name: Initialize a PostgreSQL data directory
+  become: true
+  become_method: sudo
+  become_user: postgres
+  ansible.builtin.command: /usr/local/postgresql/bin/initdb -D /var/lib/postgresql
+  vars:
+    allow_world_readable_tmpfiles: true
+    pipelining: true
+  register: initdb_result
+  failed_when: "'initdb: error: directory \"/var/lib/postgresql\" exists but is not empty
+                 If you want to create a new database system, either remove or empty
+                 the directory \"/var/lib/postgresql\" or run initdb
+                 with an argument other than \"/var/lib/postgresql\"' in initdb_result.stderr"
+
+- name: Copy config files to a config directory
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: /etc/postgresql
+    remote_src: yes
+  loop:
+    - /var/lib/postgresql/postgresql.conf
+    - /var/lib/postgresql/pg_hba.conf
+    - /var/lib/postgresql/pg_ident.conf
+  ignore_errors: true
+
+- name: Remove config files from a data directory
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: absent
+  loop:
+    - /var/lib/postgresql/postgresql.conf
+    - /var/lib/postgresql/pg_hba.conf
+    - /var/lib/postgresql/pg_ident.conf
+
+- name: Copy a PostgreSQL systemd unit file
+  ansible.builtin.copy:
+    src: postgresql.service
+    dest: /etc/systemd/system
+
+- name: Reread systemd configs
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: Start and enable PostgreSQL
+  ansible.builtin.systemd_service:
+    name: postgresql
+    state: started
+    enabled: true
+    masked: true

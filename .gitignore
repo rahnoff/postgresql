@@ -1,2 +1,5 @@
 ansible-playbooks/roles/pgbouncer/files/pgbouncer.tar.gz
 ansible-playbooks/roles/postgresql/files/postgresql.tar.gz
+ansible-playbooks/roles/postgresql/files/postgresql-conf.tar.gz
+ansible-playbooks/roles/patroni/files/postgresql.tar.gz
+ansible-playbooks/roles/patroni/files/postgresql-conf.tar.gz

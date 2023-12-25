@@ -3,5 +3,10 @@
 - hosts: postgresql
   roles:
     - postgresql
-    - pgtune
-    - pgbouncer
+    #- pgtune
+    #- pgbouncer
+
+- hosts: postgresql
+  serial: 1
+  roles:
+    - patroni

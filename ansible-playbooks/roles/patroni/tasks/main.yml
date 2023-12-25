@@ -1,0 +1,61 @@
+#- name: Create a PostgreSQL user
+#  ansible.builtin.user:
+#    comment: PostgreSQL user
+#    name: postgres
+#    shell: /bin/bash
+
+#- name: Create PostgreSQL config, data and log directories
+#  ansible.builtin.file:
+#    path: '{{ item }}'
+#    state: directory
+#  loop:
+#    - /etc/postgresql
+#    - /var/lib/postgresql
+#    - /var/log/postgresql
+
+#- name: Change an ownership of PostgreSQL directories
+#  ansible.builtin.file:
+#    group: postgres
+#    owner: postgres
+#    path: '{{ item }}'
+#    state: directory
+#  loop:
+#    - /var/lib/postgresql
+#    - /var/log/postgresql
+
+#- name: Extract PostgreSQL binaries and config files
+#  ansible.builtin.unarchive:
+#    dest: '{{ item.dest }}'
+#    src: '{{ item.src }}'
+#  loop:
+#    - { dest: '/usr/local', src: 'postgresql.tar.gz' }
+#    - { dest: '/etc/postgresql', src: 'postgresql-conf.tar.gz' }
+
+#- name: Create Patroni config and log directories
+#  ansible.builtin.file:
+#    path: '{{ item }}'
+#    state: directory
+#  loop:
+#    - /etc/patroni
+#    - /var/log/patroni
+
+- name: Render a Patroni config
+  ansible.builtin.template:
+    dest: /etc/patroni.yml
+    src: patroni.yml.j2
+
+- name: Copy a Patroni systemd unit file
+  ansible.builtin.copy:
+    dest: /etc/systemd/system
+    src: patroni.service
+
+- name: Reread systemd configs
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: Start and enable Patroni
+  ansible.builtin.systemd_service:
+    enabled: true
+    masked: false
+    name: patroni
+    state: started

@@ -1,6 +1,6 @@
 name: {{ inventory_hostname }}
-namespace: multiplication
-scope: database
+namespace: service
+scope: {{ database_name }}
 
 bootstrap:
   dcs:

@@ -5,14 +5,14 @@ then
   exit 1
 fi
 
-linux_flavor="$1"
+# linux_flavor="$1"
 
-postgresql_version="$2"
+# postgresql_version="$2"
 
-echo -e "Compiling PostgreSQL $postgresql_version\n"
+echo -e "Compiling PostgreSQL $2\n"
 
-docker image build --build-arg version="$postgresql_version" \
-  -f ../dockerfiles/PostgreSQL-"$linux_flavor" \
+docker image build --build-arg version="$2" \
+  -f ../dockerfiles/PostgreSQL-"$1" \
   -t postgresql-initialized:latest .
 
 echo -e "\n"

@@ -39,6 +39,16 @@
 #    - /etc/patroni
 #    - /var/log/patroni
 
+- name: Extract Patroni and dependencies
+  ansible.builtin.unarchive:
+    dest: /tmp
+    src: patroni.tar.gz
+
+- name: Install Patroni
+  ansible.builtin.pip:
+    extra_args: "-f /tmp/patroni --no-index"
+    name: patroni[psycopg2-binary,etcd]
+
 - name: Render a Patroni config
   ansible.builtin.template:
     dest: /etc/patroni.yml

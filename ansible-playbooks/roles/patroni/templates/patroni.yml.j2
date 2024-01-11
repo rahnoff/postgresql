@@ -10,40 +10,41 @@ bootstrap:
     maximum_lag_on_failover: 1048576
     postgresql:
       use_pg_rewind: true
+      use_slots: true
       pg_hba:
-      - host replication replicator 127.0.0.1/32 md5
+      # - host replication replicator 0.0.0.0/0 md5
+      - host replication replication_user 0.0.0.0/0 md5
       - host all all 0.0.0.0/0 md5
-      parameters:
+      # parameters:
   initdb:
   - encoding: UTF8
   - data-checksums
 
-etcd:
-  host: 127.0.0.1:2379
+etcd3:
+  host: {{ etcd_url }}
 
 postgresql:
   authentication:
     replication:
-      username: replicator
-      password: rep-pass
+      username: replication_user
+      password: replication_password
     superuser:
       username: postgres
       password: zalando
     rewind:
       username: rewind_user
       password: rewind_password
-  listen: 127.0.0.1:5432
-  connect_address: 127.0.0.1:5432
+  listen: 0.0.0.0:5432
+  connect_address: {{ inventory_hostname }}:5432
   data_dir: /var/lib/postgresql
   bin_dir: /usr/local/postgresql/bin
-  config_dir: /etc/postgresql
   pgpass: /tmp/pgpass0
   parameters:
     unix_socket_directories: /tmp
 
 restapi:
-  listen: 127.0.0.1:8008
-  connect_address: 127.0.0.1:8008
+  listen: 0.0.0.0:8008
+  connect_address: 0.0.0.0:8008
 
 tags:
   nofailover: false

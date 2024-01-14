@@ -15,7 +15,7 @@ RUN md5sum -c Python-$python_version.tgz.md5 && \
 RUN Python-$python_version/configure \
     --enable-loadable-sqlite-extensions=yes --prefix=$PWD && \
     make && make altinstall
-RUN bin/pip${python_version%.*} install pysqlite3 && \
+RUN bin/pip${python_version%.*} install pysqlite3 setproctitle && \
     bin/pip${python_version%.*} install patroni[etcd,psycopg2-binary] pex
 RUN bin/python${python_version%.*} -m pex \
     $(bin/pip${python_version%.*} freeze | grep -vE "pex|pysqlite3") \

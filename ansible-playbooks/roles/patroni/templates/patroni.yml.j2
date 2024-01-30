@@ -12,9 +12,9 @@ bootstrap:
       use_pg_rewind: true
       use_slots: true
       pg_hba:
-      # - host replication replicator 0.0.0.0/0 md5
-      - host replication replication_user 0.0.0.0/0 md5
-      - host all all 0.0.0.0/0 md5
+      # - host replication replicator 0.0.0.0/0 scram-sha-256
+      - host replication replication_user 0.0.0.0/0 scram-sha-256
+      - host all all 0.0.0.0/0 scram-sha-256
       # parameters:
   initdb:
   - encoding: UTF8
@@ -22,6 +22,12 @@ bootstrap:
 
 etcd3:
   host: {{ etcd_url }}
+
+log:
+  format: '%(asctime)s %(levelname)s: %(message)s'
+  level: INFO
+  max_queue_size: 1000
+  traceback_level: ERROR
 
 postgresql:
   authentication:
@@ -44,7 +50,7 @@ postgresql:
 
 restapi:
   listen: 0.0.0.0:8008
-  connect_address: 0.0.0.0:8008
+  connect_address: {{ inventory_hostname }}:8008
 
 tags:
   nofailover: false

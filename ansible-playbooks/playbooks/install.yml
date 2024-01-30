@@ -8,3 +8,7 @@
   serial: 1
   roles:
     - patroni
+
+- hosts: postgresql
+  roles:
+    - logrotate

@@ -1,7 +1,5 @@
 - name: Configure Patroni logs rotation
   ansible.builtin.blockinfile:
-    path: /etc/logrotate.d/patroni
-    create: true
     block: |
       /var/log/patroni/patroni.log {
         rotate 7
@@ -11,4 +9,7 @@
         missingok
         notifempty
         create 0600 postgres postgres
+        su postgres postgres
       }
+    create: true
+    path: /etc/logrotate.d/patroni

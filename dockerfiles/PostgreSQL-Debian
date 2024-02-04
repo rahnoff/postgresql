@@ -1,17 +1,21 @@
 FROM debian:11-slim@sha256:9af4db29e828a4d08c7819f9e0972e2dbdac575e73c6438630c83bd79f49c8aa
 ARG version
-WORKDIR /src
+# WORKDIR /src
 RUN apt update && apt upgrade -y && apt install -y build-essential curl \
     libreadline-dev zlib1g-dev
-RUN curl -O https://ftp.postgresql.org/pub/source/v$version.0/postgresql-$version.0.tar.gz \
-         -O https://ftp.postgresql.org/pub/source/v$version.0/postgresql-$version.0.tar.gz.md5
-RUN md5sum -c postgresql-$version.0.tar.gz.md5 && \
-    gzip -d postgresql-$version.0.tar.gz && \
-    tar -xf postgresql-$version.0.tar
-RUN postgresql-$version.0/configure --prefix=/usr/local/postgresql && \
-    make world && make install-world
-RUN groupadd -r initializer && useradd -g initializer -rM \
-    -s /bin/false initializer && mkdir /var/lib/postgresql && \
-    chown initializer:initializer /var/lib/postgresql
-USER initializer:initializer
-RUN /usr/local/postgresql/bin/initdb -D /var/lib/postgresql
+RUN groupadd -r postgres && useradd -g postgres -rM -s /bin/false postgres
+RUN mkdir /src /usr/local/postgresql && chown postgres:postgres /src \
+    /usr/local/postgresql
+WORKDIR /src
+USER postgres:postgres
+RUN curl -O https://ftp.postgresql.org/pub/source/v$version/postgresql-$version.tar.gz \
+         -O https://ftp.postgresql.org/pub/source/v$version/postgresql-$version.tar.gz.sha256
+RUN sha256sum -c postgresql-$version.tar.gz.sha256 && \
+    gzip -d postgresql-$version.tar.gz && \
+    tar -xf postgresql-$version.tar
+RUN postgresql-$version/configure --prefix=/usr/local/postgresql && \
+    make world && make check && make install-world
+    # && make install-world
+# RUN groupadd -r postgres && useradd -g postgres -rM -s /bin/false postgres
+# USER postgres:postgres
+# RUN make check && make install-world

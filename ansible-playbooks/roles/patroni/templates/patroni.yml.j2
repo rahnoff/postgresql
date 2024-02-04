@@ -13,8 +13,12 @@ bootstrap:
       use_slots: true
       pg_hba:
       # - host replication replicator 0.0.0.0/0 scram-sha-256
+      # - host all all 0.0.0.0/0 scram-sha-256
+      - local all postgres trust
+      - host {{ database_name }} {{ database_name }}_admin 0.0.0.0/0 scram-sha-256
       - host replication replication_user 0.0.0.0/0 scram-sha-256
-      - host all all 0.0.0.0/0 scram-sha-256
+      # - local all postgres trust
+      # - host all postgres 127.0.0.1/32 scram-sha-256
       # parameters:
   initdb:
   - encoding: UTF8
@@ -30,6 +34,7 @@ log:
   traceback_level: ERROR
 
 postgresql:
+  use_unix_socket: true
   authentication:
     replication:
       username: replication_user
@@ -57,3 +62,14 @@ tags:
   noloadbalance: false
   clonefrom: false
   nosync: false
+
+users:
+  {{ database_name }}_admin:
+    password: secret
+    options:
+      - createrole
+
+watchdog:
+  device: /dev/watchdog
+  mode: required
+  safety_margin: 5

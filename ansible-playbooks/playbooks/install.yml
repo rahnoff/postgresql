@@ -3,6 +3,7 @@
 - hosts: postgresql
   roles:
     - postgresql
+    - watchdog
 
 - hosts: postgresql
   serial: 1

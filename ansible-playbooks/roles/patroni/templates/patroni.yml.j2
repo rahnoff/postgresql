@@ -52,6 +52,7 @@ postgresql:
   pgpass: /tmp/pgpass0
   parameters:
     unix_socket_directories: /tmp
+    password_encryption: scram-sha-256
 
 restapi:
   listen: 0.0.0.0:8008
@@ -62,12 +63,6 @@ tags:
   noloadbalance: false
   clonefrom: false
   nosync: false
-
-users:
-  {{ database_name }}_admin:
-    password: secret
-    options:
-      - createrole
 
 watchdog:
   device: /dev/watchdog

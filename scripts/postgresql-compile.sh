@@ -1,57 +1,46 @@
-if [ "$#" -lt 2 ]
-then
-  echo "Usage: `basename $0` Debian 12 or `basename $0` RHEL 14"
-  echo "Debian or RHEL - Linux flavor, 12 or 14 - PostgreSQL version"
+#!/bin/bash
+#
+# Compile PostgreSQL in Docker
+
+set -o pipefail
+
+if [[ "$#" -lt 2 ]]; then
+  echo "Usage: $(basename $0) Debian 12.1 or $(basename $0) RHEL 14.2"
+  echo "Debian or RHEL - Linux flavor, 12.1 or 14.2 - PostgreSQL version"
   exit 1
 fi
-
-# linux_flavor="$1"
-
-# postgresql_version="$2"
 
 echo -e "Compiling PostgreSQL $2\n"
 
 docker image build --build-arg version="$2" \
   -f ../dockerfiles/PostgreSQL-"$1" \
-  -t postgresql-initialized:latest .
+  -t postgresql-compiled:latest .
 
 echo -e "\n"
 
-echo -e "Copying /usr/local/postgresql and config files\n"
-
-# files_to_extract=("/usr/local/postgresql" "/var/lib/postgresql/pg_hba.conf" \
-#   "/var/lib/postgresql/pg_ident.conf" "/var/lib/postgresql/postgresql.conf")
-
-# for item in ${files_to_extract[@]}
-# do
-#   docker container cp $(docker container create \
-#     postgresql-initialized:latest):$item .
-# done
+echo -e "Copying /usr/local/postgresql\n"
 
 docker container cp $(docker container create \
-  postgresql-initialized:latest):/usr/local/postgresql .
+  postgresql-compiled:latest):/usr/local/postgresql .
 
 tar -cf postgresql.tar postgresql
 
-# tar -cf postgresql-conf.tar pg_hba.conf pg_ident.conf postgresql.conf
-
-gzip postgresql.tar # postgresql-conf.tar
+gzip postgresql.tar
 
 mv postgresql.tar.gz ../ansible-playbooks/roles/postgresql/files
 
-# mv postgresql-conf.tar.gz ../ansible-playbooks/roles/postgresql/files
-
-rm -rf postgresql pg_hba.conf pg_ident.conf postgresql.conf
+rm -rf postgresql
 
 echo -e "\n"
 
 echo -e "Removing containers\n"
 
-docker container rm $(docker container ls -a | \
-  grep "postgresql-initialized:latest" | awk '{print $1}')
+docker container rm $(docker container ls -a \
+  | grep "postgresql-compiled:latest" \
+  | awk '{print $1}')
 
 echo -e "\n"
 
 echo -e "Removing an image\n"
 
-docker image rm postgresql-initialized:latest
+docker image rm postgresql-compiled:latest

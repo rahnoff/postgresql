@@ -4,9 +4,7 @@ scope: {{ database_name }}
 
 bootstrap:
   dcs:
-    ttl: 30
     loop_wait: 10
-    retry_timeout: 10
     maximum_lag_on_failover: 1048576
     postgresql:
       use_pg_rewind: true
@@ -14,15 +12,17 @@ bootstrap:
       pg_hba:
       # - host replication replicator 0.0.0.0/0 scram-sha-256
       # - host all all 0.0.0.0/0 scram-sha-256
-      - local all postgres trust
       - host {{ database_name }} {{ database_name }}_admin 0.0.0.0/0 scram-sha-256
-      - host replication replication_user 0.0.0.0/0 scram-sha-256
+      - host replication replication_role 0.0.0.0/0 scram-sha-256
+      - local all postgres peer
       # - local all postgres trust
       # - host all postgres 127.0.0.1/32 scram-sha-256
       # parameters:
+    retry_timeout: 10
+    ttl: 30
   initdb:
-  - encoding: UTF8
   - data-checksums
+  - encoding: UTF8
 
 etcd3:
   host: {{ etcd_url }}
@@ -37,13 +37,13 @@ postgresql:
   use_unix_socket: true
   authentication:
     replication:
-      username: replication_user
+      username: replication_role
       password: replication_password
     superuser:
       username: postgres
       password: zalando
     rewind:
-      username: rewind_user
+      username: rewind_role
       password: rewind_password
   listen: 0.0.0.0:5432
   connect_address: {{ inventory_hostname }}:5432
@@ -55,13 +55,13 @@ postgresql:
     password_encryption: scram-sha-256
 
 restapi:
-  listen: 0.0.0.0:8008
   connect_address: {{ inventory_hostname }}:8008
+  listen: 0.0.0.0:8008
 
 tags:
+  clonefrom: false
   nofailover: false
   noloadbalance: false
-  clonefrom: false
   nosync: false
 
 watchdog:

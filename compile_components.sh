@@ -52,9 +52,17 @@ function compile_patroni() {
           --prefix=$PWD \
           && make \
           && make altinstall \
-          && bin/pip${python_version%.*} install pysqlite3 setproctitle \
-          && bin/pip${python_version%.*} install \
-          patroni[etcd,psycopg2-binary] \
+          && bin/python${python_version%.*} -m pip install \
+          --no-cache-dir \
+          --upgrade \
+          pip \
+          && bin/python${python_version%.*} -m pip install \
+          --no-cache-dir \
+          pysqlite3 \
+          setproctitle \
+          && bin/python${python_version%.*} -m pip install \
+          --no-cache-dir \
+          patroni[etcd3,psycopg3] \
           pex \
           && bin/python${python_version%.*} -m pex \
           $(bin/pip${python_version%.*} freeze | grep -vE "pex|pysqlite3") \
@@ -86,7 +94,7 @@ EOF
 # }
 
 
-function compile_postgresql() {}
+# function compile_postgresql() {}
 
 
 function error() {

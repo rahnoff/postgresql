@@ -94,7 +94,57 @@ EOF
 # }
 
 
-# function compile_postgresql() {}
+function compile_postgresql() {
+  local dockerfile
+
+  if [[ "$2" == 'debian' ]]; then
+    dockerfile="$(cat 0<<"EOF"
+    FROM rockylinux:8.9-mininal@sha256:6e772539b14a6463bfe3b1a8ee26200fbd01ec830ac02aaff9c16ebf27f2f410
+    ARG version
+    WORKDIR /src
+    RUN microdnf install -y dnf \
+          && dnf upgrade -y \
+          && dnf -y groupinstall 'Development Tools' \
+          && dnf install -y readline-devel
+EOF
+    )"
+  elif [[ "$2" == 'rhel' ]]; then
+    dockerfile="
+    FROM rockylinux:8.9-minimal@sha256:6e772539b14a6463bfe3b1a8ee26200fbd01ec830ac02aaff9c16ebf27f2f410
+    ARG version
+    RUN microdnf install -y dnf \
+          && dnf upgrade -y \
+          && dnf -y groupinstall 'Development Tools' \
+          && dnf install -y readline-devel \
+          && groupadd -r postgres \
+          && useradd -g postgres -rM -s /bin/false postgres \
+          && mkdir /src /usr/local/postgresql \
+          && chown postgres:postgres /src /usr/local/postgresql
+    WORKDIR /src
+    USER postgres:postgres
+    RUN curl -O https://ftp.postgresql.org/pub/source/v\$version/postgresql-\$version.tar.gz \
+          -O https://ftp.postgresql.org/pub/source/v\$version/postgresql-\$version.tar.gz.sha256 \
+          && sha256sum -c postgresql-\$version.tar.gz.sha256 \
+          && gzip -d postgresql-\$version.tar.gz \
+          && tar -xf postgresql-\$version.tar \
+          && postgresql-\$version/configure --prefix=/usr/local/postgresql \
+          && make world \
+          && make check \
+          && make install-world
+    "
+  fi
+  
+  echo "${dockerfile}" \
+    | docker image build --build-arg version="$3" -f - -t postgresql:latest .
+  docker container cp \
+    $(docker container create postgresql:latest):/usr/local/postgresql .
+  tar -cf postgresql.tar postgresql
+  gzip -f postgresql.tar
+  rm -rf postgresql
+  docker container rm \
+    $(docker container ls -a -f ancestor=postgresql:latest -q)
+  docker image rm postgresql:latest
+}
 
 
 function error() {

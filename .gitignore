@@ -3,5 +3,7 @@
 **/patroni.tar.gz
 **/patronictl.tar
 **/patronictl.tar.gz
+**/postgresql.tar.gz
+**/postgresql.tar
 ansible-playbooks/roles/pgbouncer/files/pgbouncer.tar.gz
 ansible-playbooks/roles/postgresql/files/postgresql.tar.gz

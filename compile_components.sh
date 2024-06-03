@@ -155,12 +155,14 @@ function error() {
 function main() {
   case "$1" in
     -h | --help)
-      echo -e "3 different stuff might be compiled:
-  Patroni, PgBouncer, PostgreSQL"
+      echo -e "3 different components can be compiled:
+- Patroni
+- PgBouncer
+- PostgreSQL"
       ;;
     patroni)
       if ! compile_patroni "$@"; then
-        error "Redirecting error"
+        error "Compilation error"
         exit 1
       fi
       ;;
@@ -171,8 +173,8 @@ function main() {
       compile_postgresql "$@"
       ;;
     *)
-      error "Parameters should be defined, for available ones,
-run with -h or --help option"
+      error "Parameters should be defined, for available ones, run with -h or
+--help option"
       exit 1
       ;;
   esac

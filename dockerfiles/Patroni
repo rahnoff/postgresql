@@ -1,23 +1,23 @@
 # FROM debian:11-slim@sha256:9af4db29e828a4d08c7819f9e0972e2dbdac575e73c6438630c83bd79f49c8aa
-FROM debian:10-slim@sha256:6a7f39a6a5381fe295b1f2ba5a1514d9fe35affc4410a6f3fa10234070423a73
-ARG python_version
-ARG python_version_no_dots
-WORKDIR /patroni
-RUN apt update \
-      && apt upgrade -y \
-      && apt install -y \
-      build-essential \
-      curl \
-      libffi-dev \
-      libsqlite3-dev \
-      libssl-dev \
-      zlib1g-dev
+# FROM debian:10-slim@sha256:6a7f39a6a5381fe295b1f2ba5a1514d9fe35affc4410a6f3fa10234070423a73
+# ARG python_version
+# ARG python_version_no_dots
+# WORKDIR /patroni
+# RUN apt update \
+#       && apt upgrade -y \
+#       && apt install -y \
+#       build-essential \
+#       curl \
+#       libffi-dev \
+#       libsqlite3-dev \
+#       libssl-dev \
+#       zlib1g-dev
 # RUN curl -O https://www.python.org/ftp/python/$python_version/Python-$python_version.tgz \
 #       -o python-$python_version -L https://www.python.org/downloads/release/python-$python_version_no_dots
-RUN curl \
-      -O https://www.python.org/ftp/python/$python_version/Python-$python_version.tgz \
-      # -O https://www.python.org/ftp/python/$python_version/Python-$python_version.tgz.asc \
-      # --compressed -o python-downloads.html -L https://www.python.org/downloads
+# RUN curl \
+#       -O https://www.python.org/ftp/python/$python_version/Python-$python_version.tgz \
+#       -O https://www.python.org/ftp/python/$python_version/Python-$python_version.tgz.asc \
+#       --compressed -o python-downloads.html -L https://www.python.org/downloads
       
 # RUN grep -B 2 "Python-$python_version.tgz.asc" python-$python_version \
 #       | head -1 \
@@ -26,14 +26,38 @@ RUN curl \
 # RUN md5sum -c Python-$python_version.tgz.md5 \
 #       && gzip -d Python-$python_version.tgz \
 #       && tar -xf Python-$python_version.tar
-RUN gzip -d Python-$python_version.tgz && tar -xf Python-$python_version.tar
+# RUN gzip -d Python-$python_version.tgz && tar -xf Python-$python_version.tar
 
-RUN Python-$python_version/configure \
-      --enable-loadable-sqlite-extensions=yes --prefix=$PWD \
-      && make \
-      && make altinstall
-RUN bin/pip${python_version%.*} install pysqlite3 setproctitle \
-      && bin/pip${python_version%.*} install patroni[etcd,psycopg2-binary] pex
-RUN bin/python${python_version%.*} -m pex \
-      $(bin/pip${python_version%.*} freeze \
-      | grep -vE "pex|pysqlite3") -c patroni -o patroni
+# RUN Python-$python_version/configure \
+#       --enable-loadable-sqlite-extensions=yes --prefix=$PWD \
+#       && make \
+#       && make altinstall
+# RUN bin/pip${python_version%.*} install pysqlite3 setproctitle \
+#       && bin/pip${python_version%.*} install patroni[etcd,psycopg2-binary] pex
+# RUN bin/python${python_version%.*} -m pex \
+#       $(bin/pip${python_version%.*} freeze \
+#       | grep -vE "pex|pysqlite3") -c patroni -o patroni
+
+ARG python_version
+ARG image_sha256
+FROM $python_version@$image_sha256
+WORKDIR /opt/patroni
+RUN apt update \
+      && apt upgrade -y \
+      && apt install -y \
+      build-essential \
+      libsqlite3-dev \
+      && python -m pip install --no-cache-dir --upgrade pip \
+      && python -m pip install --no-cache-dir \
+      patroni[etcd3,psycopg3] \
+      pex \
+      pysqlite3 \
+      setproctitle \
+      && python -m pex \
+      $(python -m pip freeze --exclude pex --exclude pysqlite3) \
+      -c patroni \
+      -o patroni \
+      && python -m pex \
+      $(python -m pip freeze --exclude pex --exclude pysqlite3) \
+      -c patronictl \
+      -o patronictl

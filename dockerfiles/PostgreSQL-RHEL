@@ -22,7 +22,8 @@ RUN microdnf install -y dnf \
       && chown postgres:postgres /src /usr/local/postgresql
 WORKDIR /src
 USER postgres:postgres
-RUN curl -O https://ftp.postgresql.org/pub/source/v$version/postgresql-$version.tar.gz \
+RUN curl \
+      -O https://ftp.postgresql.org/pub/source/v$version/postgresql-$version.tar.gz \
       -O https://ftp.postgresql.org/pub/source/v$version/postgresql-$version.tar.gz.sha256 \
       && sha256sum -c postgresql-$version.tar.gz.sha256 \
       && gzip -d postgresql-$version.tar.gz \

@@ -23,8 +23,11 @@ set -e
 function compile_patroni() {
   # python_version_no_dots=${1//./}
   local executable
+
   declare -a executables
+
   executables=('patroni' 'patronictl')
+
   readonly executables
 
   docker image build \
@@ -77,13 +80,17 @@ EOF
   for executable in "${executables[@]}"; do
     docker container cp \
       $(docker container create patroni:latest):/patroni/"${executable}" .
+
     tar -cf "${executable}".tar "${executable}"
+
     gzip -f "${executable}".tar
+    
     rm -rf "${executable}"
   done
 
   docker container rm \
     $(docker container ls -a -f ancestor=patroni:latest -q)
+
   docker image rm patroni:latest
 }
 

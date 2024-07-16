@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM rockylinux:8.9-mininal@sha256:6e772539b14a6463bfe3b1a8ee26200fbd01ec830ac02aaff9c16ebf27f2f410
 ARG version
 RUN microdnf install -y dnf \

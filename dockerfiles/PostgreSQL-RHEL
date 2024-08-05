@@ -5,7 +5,7 @@ ARG version
 RUN microdnf install -y dnf \
       && dnf upgrade -y \
       && dnf -y groupinstall 'Development Tools' \
-      && dnf install -y readline-devel \
+      && dnf install -y readline-devel libxml2-devel openssl-devel pam-devel \
       && groupadd -r postgres \
       && useradd -g postgres -rM -s /bin/false postgres \
       && mkdir /opt/postgresql /usr/local/postgresql \
@@ -18,7 +18,7 @@ RUN curl \
       && sha256sum -c postgresql-$version.tar.gz.sha256 \
       && gzip -d postgresql-$version.tar.gz \
       && tar -xf postgresql-$version.tar \
-      && postgresql-$version/configure --prefix=/usr/local/postgresql \
+      && postgresql-$version/configure --prefix=/usr/local/postgresql --with-libxml --with-openssl --with-pam \
       && make world \
       && make check \
       && make install-world

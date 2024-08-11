@@ -1,3 +1,5 @@
+---
+
 name: {{ inventory_hostname }}
 namespace: service
 scope: {{ database_name }}
@@ -7,34 +9,44 @@ bootstrap:
     loop_wait: 10
     maximum_lag_on_failover: 1048576
     postgresql:
-      use_pg_rewind: true
-      use_slots: true
+      bin_dir: /usr/local/postgresql/bin
+      parameters:
+        wal_level: logical
+        wal_log_hints: on
+        unix_socket_directories: /tmp
+        password_encryption: scram-sha-256
+        logging_collector: on
+        log_directory: /var/log/postgresql
+        log_filename: postgresql.log
       pg_hba:
-      # - host replication replicator 0.0.0.0/0 scram-sha-256
-      # - host all all 0.0.0.0/0 scram-sha-256
       - host {{ database_name }} {{ database_name }}_admin 0.0.0.0/0 scram-sha-256
       - host replication replication_role 0.0.0.0/0 scram-sha-256
       - local all postgres peer
-      # - local all postgres trust
-      # - host all postgres 127.0.0.1/32 scram-sha-256
-      # parameters:
+      use_pg_rewind: true
+      use_slots: true
+      use_unix_socket: true
     retry_timeout: 10
     ttl: 30
   initdb:
   - data-checksums
   - encoding: UTF8
+  - locale: UTF8
+  - pgwal: /var/lib/postgresql/wal
 
 etcd3:
   host: {{ etcd_url }}
 
 log:
-  format: '%(asctime)s %(levelname)s: %(message)s'
+  dir: /var/log/patroni
+  file_num: 4
+  file_size: 25MB
+  format: %(asctime)s %(levelname)s: %(message)s
   level: INFO
   max_queue_size: 1000
   traceback_level: ERROR
+  type: plain
 
 postgresql:
-  use_unix_socket: true
   authentication:
     replication:
       username: replication_role
@@ -45,14 +57,10 @@ postgresql:
     rewind:
       username: rewind_role
       password: rewind_password
-  listen: 0.0.0.0:5432
   connect_address: {{ inventory_hostname }}:5432
-  data_dir: /var/lib/postgresql
-  bin_dir: /usr/local/postgresql/bin
+  data_dir: /var/lib/postgresql/data
+  listen: 0.0.0.0:5432
   pgpass: /tmp/pgpass0
-  parameters:
-    unix_socket_directories: /tmp
-    password_encryption: scram-sha-256
 
 restapi:
   connect_address: {{ inventory_hostname }}:8008
@@ -68,3 +76,5 @@ watchdog:
   device: /dev/watchdog
   mode: required
   safety_margin: 5
+
+...

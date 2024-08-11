@@ -1,0 +1,11 @@
+---
+
+- include_tasks: create_user.yaml
+- include_tasks: create_partitions.yaml
+- include_tasks: create_lvm_volume_groups.yaml
+- include_tasks: create_lvm_logical_volumes.yaml
+- include_tasks: create_filesystems.yaml
+- include_tasks: mount_filesystems.yaml
+- include_tasks: extract_binaries.yaml
+
+...

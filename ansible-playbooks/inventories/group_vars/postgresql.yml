@@ -1,4 +1,6 @@
 ---
 
-database_name:
-etcd_url:
+database_name: '{{ database_name }}'
+etcd_url: '{{ etcd_url }}'
+
+...

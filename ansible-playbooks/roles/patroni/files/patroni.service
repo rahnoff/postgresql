@@ -6,12 +6,11 @@ Wants=network-online.target
 
 [Service]
 ExecReload=/bin/kill -HUP $MAINPID
-ExecStart=patroni-pex /etc/patroni.yml
+ExecStart=/usr/local/bin/patroni /etc/patroni.yml
 Group=postgres
 KillMode=process
 KillSignal=SIGINT
 Restart=on-failure
-StandardOutput=append:/var/log/patroni/patroni.log
 TimeoutSec=30
 Type=simple
 User=postgres

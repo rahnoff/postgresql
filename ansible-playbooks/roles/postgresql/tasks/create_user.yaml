@@ -1,0 +1,11 @@
+---
+
+- name: Create PostgreSQL user
+  ansible.builtin.user:
+    comment: PostgreSQL user
+    create_home: false
+    group: postgres
+    name: postgres
+    shell: /bin/bash
+
+...

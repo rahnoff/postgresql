@@ -2,7 +2,7 @@
 
 ARG image_sha256
 ARG python_version
-FROM python:$python_version@$image_sha256
+FROM python:$python_version-slim@$image_sha256
 WORKDIR /opt/patroni
 RUN apt update \
       && apt upgrade -y \

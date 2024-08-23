@@ -1,0 +1,22 @@
+---
+
+- name: Create partitions
+  community.general.parted:
+    align: optimal
+    device: '{{ item.device }}'
+    number: 1
+    state: present
+    fs_type: '{{ item.filesystem }}'
+    flags: [ lvm ]
+    part_start: '0%'
+    part_end: '100%'
+    label: msdos
+    part_type: primary
+    unit: KiB
+    resize: false
+  loop:
+    - { device: '{{ data_drive }}', filesystem: xfs }
+    - { device: '{{ wal_drive }}', filesystem: xfs }
+    - { device: '{{ log_drive }}', filesystem: ext4 }
+
+...

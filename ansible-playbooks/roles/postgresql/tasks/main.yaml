@@ -1,5 +1,6 @@
 ---
 
+- include_tasks: create_group.yaml
 - include_tasks: create_user.yaml
 - include_tasks: create_partitions.yaml
 - include_tasks: create_lvm_volume_groups.yaml

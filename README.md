@@ -1,7 +1,7 @@
 # PostgreSQL with Patroni and PgBouncer
 
-Intended for an offline setting up, tested on Debian 11. All components,<br>
-except are compiled from source within Docker.<br>
+Intended for an offline setting up, tested on Debian 11 along with Rocky Linux 8. All components,<br>
+are compiled from source within Docker.<br>
 
 ## 1 How to run
 

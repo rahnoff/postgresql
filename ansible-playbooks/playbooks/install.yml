@@ -10,6 +10,4 @@
   roles:
     - patroni
 
-- hosts: postgresql
-  roles:
-    - logrotate
+...

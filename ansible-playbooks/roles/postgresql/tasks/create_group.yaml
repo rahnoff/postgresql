@@ -1,0 +1,12 @@
+---
+
+- name: Create PostgreSQL group
+  ansible.builtin.group:
+    name: postgres
+    state: present
+    system: true
+    non_unique: false
+    local: false
+    force: false
+
+...

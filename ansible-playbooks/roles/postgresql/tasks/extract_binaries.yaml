@@ -1,0 +1,10 @@
+---
+
+- name: Extract PostgreSQL binaries
+  ansible.builtin.unarchive:
+    dest: /usr/local
+    group: root
+    owner: root
+    src: postgresql.tar.gz
+
+...

@@ -4,4 +4,24 @@ data_drive:
 log_drive:
 wal_drive:
 
+data_drive_filesystem: xfs
+log_drive_filesystem: ext4
+wal_drive_filesystem: xfs
+
+data_drive_partition: '{{ data_drive }}1'
+log_drive_partition: '{{ log_drive }}1'
+wal_drive_partition: '{{ wal_drive }}1'
+
+data_filesystem_path: /var/lib/postgresql/data
+log_filesystem_path: /var/log/postgresql
+wal_filesystem_path: /var/lib/postgresql/wal
+
+lvm_data_logical_volume: lvpgdata
+lvm_log_logical_volume: lvpglog
+lvm_wal_logical_volume: lvpgwal
+
+lvm_data_volume_group: vgpgdata
+lvm_log_volume_group: vgpglog
+lvm_wal_volume_group: vgpgwal
+
 ...

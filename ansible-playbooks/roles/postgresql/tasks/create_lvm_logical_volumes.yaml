@@ -1,0 +1,18 @@
+---
+
+- name: Create logical volumes with all space in volume groups
+  community.general.lvol:
+    active: true
+    vg: '{{ item.vg }}'
+    lv: '{{ item.lv }}'
+    size: 100%FREE
+    force: false
+    resizefs: false
+    shrink: false
+    state: present
+  loop:
+    - { vg: '{{ lvm_data_volume_group }}', lv: 'lvpgdata' }
+    - { vg: '{{ lvm_log_volume_group }}', lv: 'lvpglog' }
+    - { vg: '{{ lvm_wal_volume_group }}', lv: 'lvpgwal' }
+
+...

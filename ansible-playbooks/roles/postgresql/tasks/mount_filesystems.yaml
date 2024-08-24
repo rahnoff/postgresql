@@ -1,0 +1,14 @@
+---
+
+- name: Mount logical volumes
+  ansible.posix.mount:
+    path: '{{ item.path }}'
+    src: '{{ item.src }}'
+    fstype: '{{ item.filesystem }}'
+    state: present
+  loop:
+    - { filesystem: '{{ data_drive_filesystem }}', path: '{{ data_filesystem_path }}', src: '/dev/{{ lvm_data_volume_group }}/{{ lvm_data_logical_volume }}' }
+    - { filesystem: '{{ log_drive_filesystem }}', path: '{{ log_filesystem_path }}', src: '/dev/{{ lvm_log_volume_group }}/{{ lvm_log_logical_volume }}' }
+    - { filesystem: '{{ wal_drive_filesystem }}', path: '{{ wal_filesystem_path }}', src: '/dev/{{ lvm_wal_volume_group }}/{{ lvm_wal_logical_volume }}' }
+
+...

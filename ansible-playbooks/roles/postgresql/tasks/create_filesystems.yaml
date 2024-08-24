@@ -1,0 +1,15 @@
+---
+
+- name: Create filesystems on logical volumes
+  community.general.filesystem:
+    fstype: '{{ item.filesystem }}'
+    dev: '{{ item.device }}'
+    force: false
+    resizefs: false
+    state: present
+  loop:
+    - { device: '/dev/{{ lvm_data_volume_group }}/lvpgdata', filesystem: '{{ data_drive_filesystem }}' }
+    - { device: '/dev/{{ lvm_log_volume_group }}/lvpglog', filesystem: '{{ log_drive_filesystem }}' }
+    - { device: '/dev/{{ lvm_wal_volume_group }}/lvpgwal', filesystem: '{{ wal_drive_filesystem }}' }
+
+...

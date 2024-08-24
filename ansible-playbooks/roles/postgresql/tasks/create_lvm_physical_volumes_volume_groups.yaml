@@ -1,0 +1,18 @@
+---
+
+- name: Create physical volumes along with volume groups
+  community.general.lvg:
+    vg: '{{ item.vg }}'
+    pvs: '{{ item.pv }}'
+    pesize: 4M
+    force: false
+    pvresize: false
+    reset_pv_uuid: false
+    reset_vg_uuid: false
+    state: present
+  loop:
+    - { pv: '{{ data_drive_partition }}', vg: '{{ lvm_data_volume_group }}' }
+    - { pv: '{{ log_drive_partition }}', vg: '{{ lvm_log_volume_group }}' }
+    - { pv: '{{ wal_drive_partition }}', vg: '{{ lvm_wal_volume_group }}' }
+
+...

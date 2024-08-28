@@ -11,7 +11,7 @@ RUN apt update \
       libsqlite3-dev \
       && python -m pip install --no-cache-dir --upgrade pip \
       && python -m pip install --no-cache-dir \
-      patroni[etcd3,psycopg3] \
+      patroni[etcd3,psycopg3]==3.3.0 \
       pex \
       pysqlite3 \
       setproctitle \

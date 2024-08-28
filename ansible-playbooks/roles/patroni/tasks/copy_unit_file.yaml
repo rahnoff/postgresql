@@ -1,0 +1,18 @@
+---
+
+- name: Copy Patroni systemd unit file
+  ansible.builtin.copy:
+    backup: false
+    dest: '{{ item.dest }}'
+    force: true
+    group: root
+    mode: '{{ item.mode }}'
+    owner: root
+    remote_src: false
+    src: '{{ item.file }}'
+    unsafe_writes: false
+  loop:
+    - { dest: /usr/local/bin, file: initdb_dedicated_wal, mode: '0755' }
+    - { dest: /etc/systemd/system, file: patroni.service, mode: '0644' }
+
+...

@@ -12,9 +12,9 @@ data_drive_partition: '{{ data_drive }}1'
 log_drive_partition: '{{ log_drive }}1'
 wal_drive_partition: '{{ wal_drive }}1'
 
-data_filesystem_path: /var/lib/postgresql/data
+data_filesystem_path: /var/lib/postgresql/data-mount
 log_filesystem_path: /var/log/postgresql
-wal_filesystem_path: /var/lib/postgresql/wal
+wal_filesystem_path: /var/lib/postgresql/wal-mount
 
 lvm_data_logical_volume: lvpgdata
 lvm_log_logical_volume: lvpglog

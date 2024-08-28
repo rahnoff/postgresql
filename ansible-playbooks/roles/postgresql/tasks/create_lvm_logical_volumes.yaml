@@ -11,8 +11,8 @@
     shrink: false
     state: present
   loop:
-    - { vg: '{{ lvm_data_volume_group }}', lv: 'lvpgdata' }
-    - { vg: '{{ lvm_log_volume_group }}', lv: 'lvpglog' }
-    - { vg: '{{ lvm_wal_volume_group }}', lv: 'lvpgwal' }
+    - { vg: '{{ lvm_data_volume_group }}', lv: '{{ lvm_data_logical_volume }}' }
+    - { vg: '{{ lvm_log_volume_group }}', lv: '{{ lvm_log_logical_volume }}' }
+    - { vg: '{{ lvm_wal_volume_group }}', lv: '{{ lvm_wal_logical_volume }}' }
 
 ...

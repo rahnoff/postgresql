@@ -15,8 +15,8 @@
     unit: KiB
     resize: false
   loop:
-    - { device: '{{ data_drive }}', filesystem: xfs }
-    - { device: '{{ wal_drive }}', filesystem: xfs }
-    - { device: '{{ log_drive }}', filesystem: ext4 }
+    - { device: '{{ data_drive }}', filesystem: '{{ data_drive_filesystem }}' }
+    - { device: '{{ log_drive }}', filesystem: '{{ log_drive_filesystem }}' }
+    - { device: '{{ wal_drive }}', filesystem: '{{ wal_drive_filesystem }}' }
 
 ...

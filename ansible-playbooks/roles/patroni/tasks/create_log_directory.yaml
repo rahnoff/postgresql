@@ -1,0 +1,11 @@
+---
+
+- name: Create Patroni log directory
+  ansible.builtin.file:
+    group: postgres
+    mode: '0700'
+    owner: postgres
+    path: /var/log/patroni
+    state: directory
+
+...

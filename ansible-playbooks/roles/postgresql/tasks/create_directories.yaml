@@ -2,8 +2,15 @@
 
 - name: Create directories
   ansible.builtin.file:
-    path: /etc/some_directory
+    path: '{{ item.path }}'
     state: directory
-    mode: '0755'
+    mode: '0700'
+    group: postgres
+    owner: postgres
+    recurse: true
+  loop:
+    - { path: '{{ data_filesystem_path }}' }
+    - { path: '{{ log_filesystem_path }}' }
+    - { path: '{{ wal_filesystem_path }}' }
 
 ...

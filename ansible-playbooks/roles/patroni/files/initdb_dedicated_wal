@@ -1,0 +1,8 @@
+#!/bin/bash
+
+/usr/local/postgresql/bin/initdb \
+  -k \
+  -D /var/lib/postgresql/data-mount/data \
+  -E utf-8 \
+  -X /var/lib/postgresql/wal-mount/wal \
+  --locale=en_US.UTF-8

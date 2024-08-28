@@ -1,0 +1,13 @@
+---
+
+- name: Extract Patroni binaries
+  ansible.builtin.unarchive:
+    dest: /usr/local/bin
+    group: root
+    owner: root
+    src: '{{ item.file }}'
+  loop:
+    - { file: patroni.tar.gz }
+    - { file: patronictl.tar.gz }
+
+...

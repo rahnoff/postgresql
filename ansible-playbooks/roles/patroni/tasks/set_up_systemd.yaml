@@ -1,0 +1,13 @@
+---
+
+- name: Reread systemd configs, enable and start Patroni
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    enabled: true
+    masked: false
+    name: patroni.service
+    state: started
+    scope: system
+    no_block: false
+
+...

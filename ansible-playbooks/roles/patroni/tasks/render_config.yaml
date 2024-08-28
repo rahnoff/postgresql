@@ -1,0 +1,14 @@
+---
+
+- name: Render Patroni config
+  ansible.builtin.template:
+    backup: false
+    dest: /etc/patroni.yml
+    group: root
+    owner: root
+    mode: '0644'
+    src: patroni.yml.j2
+  notify:
+    - Restart Patroni
+
+...

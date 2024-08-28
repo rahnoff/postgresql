@@ -27,11 +27,9 @@ bootstrap:
       use_unix_socket: true
     retry_timeout: 10
     ttl: 30
-  initdb:
-  - data-checksums
-  - encoding: UTF8
-  - locale: UTF8
-  - pgwal: /var/lib/postgresql/wal
+  method: initdb_dedicated_wal
+  initdb_dedicated_wal:
+    command: initdb_dedicated_wal
 
 etcd3:
   host: {{ etcd_url }}
@@ -39,9 +37,9 @@ etcd3:
 log:
   dir: /var/log/patroni
   file_num: 4
-  file_size: 25MB
-  format: %(asctime)s %(levelname)s: %(message)s
-  level: INFO
+  file_size: 10485760
+  format: '%(asctime)s %(levelname)s: %(message)s'
+  level: DEBUG
   max_queue_size: 1000
   traceback_level: ERROR
   type: plain
@@ -58,13 +56,15 @@ postgresql:
       username: rewind_role
       password: rewind_password
   connect_address: {{ inventory_hostname }}:5432
-  data_dir: /var/lib/postgresql/data
-  listen: 0.0.0.0:5432
-  pgpass: /tmp/pgpass0
+  data_dir: /var/lib/postgresql/data-mount/data
+  listen: {{ inventory_hostname }}:5432
+  # listen: 0.0.0.0:5432
+  # pgpass: /tmp/pgpass0
 
 restapi:
   connect_address: {{ inventory_hostname }}:8008
-  listen: 0.0.0.0:8008
+  # listen: 0.0.0.0:8008
+  listen: {{ inventory_hostname }}:8008
 
 tags:
   clonefrom: false

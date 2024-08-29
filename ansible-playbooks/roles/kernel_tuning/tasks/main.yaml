@@ -1,6 +1,6 @@
 ---
 
 - include_tasks: sysctl.yaml
-- include_tasks: thp_switch_off.yaml
+# - include_tasks: thp_switch_off.yaml
 
 ...

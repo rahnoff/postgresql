@@ -2,6 +2,7 @@
 
 - hosts: postgresql
   roles:
+    - kernel_tuning
     - postgresql
     - watchdog
 

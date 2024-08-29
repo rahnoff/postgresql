@@ -11,13 +11,22 @@ bootstrap:
     postgresql:
       bin_dir: /usr/local/postgresql/bin
       parameters:
+        archive_mode: on
         wal_level: logical
         wal_log_hints: on
         unix_socket_directories: /tmp
         password_encryption: scram-sha-256
         logging_collector: on
-        log_directory: /var/log/postgresql
+        log_directory: /var/log/postgresql/log
         log_filename: postgresql.log
+        log_file_mode: 0600
+        log_rotation_age: 7d
+        log_rotation_size: 128MB
+        log_line_prefix: '%t [%p]: [%l] user=%u,db=%d,app=%a,client%h'
+        log_checkpoints: on
+        log_disconnections: on
+        log_min_duration_statement: 100ms
+        shared_preload_libraries: pg_stat_statements
       pg_hba:
       - host {{ database_name }} {{ database_name }}_admin 0.0.0.0/0 scram-sha-256
       - host replication replication_role 0.0.0.0/0 scram-sha-256
@@ -56,15 +65,25 @@ postgresql:
       username: rewind_role
       password: rewind_password
   connect_address: {{ inventory_hostname }}:5432
+  create_replica_methods:
+    - pgbackrest
+    - basebackup
+  pgbackrest:
+    command: /usr/bin/pgbackrest --stanza=<scope> --delta restore
+    keep_data: True
+    no_params: True
+  basebackup:
+    - verbose
+    - max-rate: '100M'
+    - waldir: /var/lib/postgresql/wal-mount/wal
   data_dir: /var/lib/postgresql/data-mount/data
   listen: {{ inventory_hostname }}:5432
   # listen: 0.0.0.0:5432
-  # pgpass: /tmp/pgpass0
+  pgpass: /tmp/pgpass0
 
 restapi:
   connect_address: {{ inventory_hostname }}:8008
-  # listen: 0.0.0.0:8008
-  listen: {{ inventory_hostname }}:8008
+  listen: 0.0.0.0:8008
 
 tags:
   clonefrom: false

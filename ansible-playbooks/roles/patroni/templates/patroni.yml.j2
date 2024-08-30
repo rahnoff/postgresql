@@ -29,7 +29,11 @@ bootstrap:
         shared_preload_libraries: pg_stat_statements
       pg_hba:
       - host {{ database_name }} {{ database_name }}_admin 0.0.0.0/0 scram-sha-256
-      - host replication replication_role 0.0.0.0/0 scram-sha-256
+      {% for host in groups['postgresql'] %}
+          {% if host != inventory_hostname %}
+      - host replication replication_role {{ host }}/32 scram-sha-256
+          {% endif %}
+      {% endfor %}
       - local all postgres peer
       use_pg_rewind: true
       use_slots: true
@@ -48,7 +52,7 @@ log:
   file_num: 4
   file_size: 10485760
   format: '%(asctime)s %(levelname)s: %(message)s'
-  level: DEBUG
+  level: INFO
   max_queue_size: 1000
   traceback_level: ERROR
   type: plain

@@ -8,6 +8,7 @@
     owner: root
     mode: '0644'
     src: patroni.yml.j2
+    lstrip_blocks: true
   notify:
     - Restart Patroni
 

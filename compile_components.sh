@@ -116,7 +116,7 @@ function main() {
   - PgBouncer
   - PostgreSQL\n'
       echo 'By the way of illustration:
-  $ compile_components postgresql debian 12.18
+  $ compile_components postgresql rhel 12.18
   $ compile_components patroni sha256:736b76eb3f64778646ce0051fb5fed4dfbf67016e51563946230ca8bb40ac687 3.9.6'
       ;;
     patroni)

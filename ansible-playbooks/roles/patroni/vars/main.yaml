@@ -1,6 +1,23 @@
 ---
 
+checkpoint_completion_target:
 database_name:
+default_statistics_target:
+effective_cache_size:
+effective_io_concurrency:
 etcd_url:
+huge_pages:
+maintenance_work_mem:
+max_connections:
+max_parallel_maintenance_workers:
+max_parallel_workers:
+max_parallel_workers_per_gather:
+max_worker_processes:
+max_wal_size:
+min_wal_size:
+random_page_cost:
+shared_buffers:
+wal_buffers:
+work_mem:
 
 ...

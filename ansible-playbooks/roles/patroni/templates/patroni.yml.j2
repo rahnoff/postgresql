@@ -21,12 +21,29 @@ bootstrap:
         log_filename: postgresql.log
         log_file_mode: 0600
         log_rotation_age: 7d
-        log_rotation_size: 128MB
+        log_rotation_size: 100MB
         log_line_prefix: '%t [%p]: [%l] user=%u,db=%d,app=%a,client%h'
         log_checkpoints: on
         log_disconnections: on
         log_min_duration_statement: 100ms
         shared_preload_libraries: pg_stat_statements
+        checkpoint_completion_target: {{ checkpoint_completion_target }}
+        default_statistics_target: {{ default_statistics_target }}
+        effective_cache_size: {{ effective_cache_size }}
+        effective_io_concurrency: {{ effective_io_concurrency }}
+        huge_pages: {{ huge_pages }}
+        maintenance_work_mem: {{ maintenance_work_mem }}
+        max_connections: {{ max_connections }}
+        max_parallel_maintenance_workers: {{ max_parallel_maintenance_workers }}
+        max_parallel_workers: {{ max_parallel_workers }}
+        max_parallel_workers_per_gather: {{ max_parallel_workers_per_gather }}
+        max_worker_processes: {{ max_worker_processes }}
+        max_wal_size: {{ max_wal_size }}
+        min_wal_size: {{ min_wal_size }}
+        random_page_cost: {{ random_page_cost }}
+        shared_buffers: {{ shared_buffers }}
+        wal_buffers: {{ wal_buffers }}
+        work_mem: {{ work_mem }}
       pg_hba:
       - host {{ database_name }} {{ database_name }}_admin 0.0.0.0/0 scram-sha-256
       {% for host in groups['postgresql'] %}

@@ -7,7 +7,7 @@
     mode: '0700'
     group: postgres
     owner: postgres
-    recurse: true
+    recurse: false
   loop:
     - { path: '{{ data_filesystem_path }}' }
     - { path: '{{ log_filesystem_path }}' }

@@ -1,6 +1,6 @@
 ---
 
-- name: Copy Patroni systemd unit file
+- name: Copy initdb script and Patroni systemd unit files
   ansible.builtin.copy:
     backup: false
     dest: '{{ item.dest }}'

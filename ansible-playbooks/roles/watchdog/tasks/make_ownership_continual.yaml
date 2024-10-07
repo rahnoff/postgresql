@@ -1,0 +1,9 @@
+---
+
+- name: Make ownership continual
+  ansible.builtin.lineinfile:
+    create: true
+    line: GROUP="postgres", KERNEL=="watchdog", OWNER="postgres"
+    path: /etc/udev/rules.d/99-watchdog.rules
+
+...

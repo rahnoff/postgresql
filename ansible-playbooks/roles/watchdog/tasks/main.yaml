@@ -1,0 +1,7 @@
+---
+
+- include_tasks: load_watchdog.yaml
+- include_tasks: alter_ownership.yaml
+- include_tasks: make_ownership_continual.yaml
+
+...

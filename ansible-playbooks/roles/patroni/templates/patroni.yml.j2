@@ -44,12 +44,13 @@ bootstrap:
         shared_buffers: {{ shared_buffers }}
         wal_buffers: {{ wal_buffers }}
         work_mem: {{ work_mem }}
-        checkpoint_timeout: 60
+        checkpoint_timeout: 300
         archive_timeout: 60
       pg_hba:
       - host {{ database_name }} {{ database_name }}_admin 0.0.0.0/0 scram-sha-256
       {% for host in groups['postgresql'] %}
       - host replication replication_role {{ hostvars[host]['ansible_default_ipv4']['address'] }}/32 scram-sha-256
+      - host all rewind_role {{ hostvars[host]['ansible_default_ipv4']['address'] }}/32 scram-sha-256
       {% endfor %}
       - local all postgres peer
       use_pg_rewind: true
@@ -99,8 +100,7 @@ postgresql:
     - waldir: /var/lib/postgresql/wal-mount/wal
   data_dir: /var/lib/postgresql/data-mount/data
   listen: {{ inventory_hostname }}:5432
-  # listen: 0.0.0.0:5432
-  pgpass: /home/postgres/pgpass0
+  pgpass: /home/postgres/.pgpass0
 
 restapi:
   connect_address: {{ inventory_hostname }}:8008

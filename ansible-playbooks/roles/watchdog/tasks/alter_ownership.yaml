@@ -1,0 +1,9 @@
+---
+
+- name: Shift ownership to postgres
+  ansible.builtin.file:
+    group: postgres
+    owner: postgres
+    path: /dev/watchdog
+
+...

@@ -1,0 +1,9 @@
+---
+
+- name: Load Watchdog
+  community.general.modprobe:
+    name: softdog
+    persistent: present
+    state: present
+
+...

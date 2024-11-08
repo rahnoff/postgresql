@@ -1,0 +1,9 @@
+---
+
+- include_tasks: extract_binaries.yaml
+- include_tasks: render_config.yaml
+- include_tasks: create_log_directory.yaml
+- include_tasks: copy_unit_file.yaml
+- include_tasks: set_up_systemd.yaml
+
+...

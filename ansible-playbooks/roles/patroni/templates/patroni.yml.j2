@@ -50,7 +50,7 @@ bootstrap:
       - host {{ database_name }} {{ database_name }}_admin 0.0.0.0/0 scram-sha-256
       {% for host in groups['postgresql'] %}
       - host replication replication_role {{ hostvars[host]['ansible_default_ipv4']['address'] }}/32 scram-sha-256
-      - host all rewind_role {{ hostvars[host]['ansible_default_ipv4']['address'] }}/32 scram-sha-256
+      # - host all rewind_role {{ hostvars[host]['ansible_default_ipv4']['address'] }}/32 scram-sha-256
       {% endfor %}
       - local all postgres peer
       use_pg_rewind: true

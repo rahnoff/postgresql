@@ -1,0 +1,18 @@
+# syntax=docker/dockerfile:1
+
+FROM rockylinux:8.9-mininal@sha256:6e772539b14a6463bfe3b1a8ee26200fbd01ec830ac02aaff9c16ebf27f2f410
+ARG version
+WORKDIR /opt/pgbackrest
+RUN microdnf install -y dnf \
+      && dnf upgrade -y \
+      && dnf -y groupinstall 'Development Tools' \
+      && dnf install -y rocky-release-hpc \
+      && dnf install -y --enablerepo=powertools libpq-devel openssl-devel libxml2-devel lz4-devel libzstd-devel bzip2-devel libyaml-devel libssh2-devel \
+      && curl \
+      -LO https://github.com/pgbackrest/pgbackrest/archive/refs/tags/release/$version.tar.gz \
+      -O https://dl.rockylinux.org/pub/rocky/8/AppStream/x86_64/os/Packages/l/libpq-13.11-1.el8.x86_64.rpm \
+      -O https://dl.rockylinux.org/pub/sig/8/hpc/x86_64/hpc-common/Packages/l/libssh2-1.9.0-5.el8.hpc.x86_64.rpm \
+      && gzip -d $version.tar.gz \
+      && tar -xf $version.tar
+WORKDIR /opt/pgbackrest/pgbackrest-release-$version/src
+RUN ./configure && make && make install

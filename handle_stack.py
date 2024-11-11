@@ -10,7 +10,7 @@ def compile_patroni(docker_image_sha256: str, python_version: str) -> None:
     '''
     Compile Patroni and its CLI into single files with all defined dependencies
     bundled, a compilation takes places in a Docker container, a succesfull one
-    results in tarballs being created in a root directory.
+    results in tarballs being created in a respective Ansible role directory.
     '''
     build_arg_first: str = f'docker_image_sha256={docker_image_sha256}'
     build_arg_second: str = f'python_version={python_version}'
@@ -29,15 +29,51 @@ def compile_patroni(docker_image_sha256: str, python_version: str) -> None:
     subprocess.run(['docker', 'image', 'rm', docker_image_name])
 
 
+def compile_postgresql(linux_flavor: str, postgresql_version: str) -> None:
+    '''
+    Compile PostgreSQL, a compilation takes places in a Docker container,
+    a succesfull one results in a tarball being created in a respective
+    Ansible role directory.
+    '''
+    build_arg_first: str = f'postgresql_version={postgresql_version}'
+    if linux_flavor == 'Debian':
+        dockerfile: str = f'{DOCKERFILES_DIRECTORY}/PostgreSQL-Debian'
+    elif linux_flavor == 'RHEL':
+        dockerfile: str = f'{DOCKERFILES_DIRECTORY}/PostgreSQL-RHEL'
+    else:
+        print(f'{linux_flavor} is irrelevant in this function')
+    docker_image_name: str = 'postgresql-compiled:latest'
+    executable: str = 'postgresql'
+    subprocess.run(['docker', 'image', 'build', '-f', dockerfile, '-t', docker_image_name, '--build-arg', build_arg_first, '--no-cache', '.'])
+    docker_container_id: str = subprocess.check_output(['docker', 'container', 'create', docker_image_name]).decode('utf-8').strip()
+    subprocess.run(['docker', 'container', 'cp', f'{docker_container_id}:/usr/local/{executable}', '.'])
+    subprocess.run(['tar', '-cf', f'{executable}.tar', f'{executable}'])
+    subprocess.run(['gzip', '-f', f'{executable}.tar'])
+    subprocess.run(['mv', f'{executable}.tar.gz', f'{GIT_DIRECTORY}/ansible-playbooks/roles/postgresql/files'])
+    subprocess.run(['rm', '-fr', f'{executable}'])
+    subprocess.run(['docker', 'container', 'rm', docker_container_id])
+    subprocess.run(['docker', 'image', 'rm', docker_image_name])
+
+
 def parse_cli_args() -> None:
     parser: argparse.ArgumentParser = argparse.ArgumentParser()
     parser.add_argument('action', help='compile or install', type=str)
     parser.add_argument('item', help='patroni, pgbackrest, postgresql', type=str)
-    parser.add_argument('--docker_image_sha256', help='dsfdsf', type=str)
-    parser.add_argument('--python_version', help='fdgfdg', type=str)
+    parser.add_argument('--docker_image_sha256', help='Patroni Docker image SHA256', type=str)
+    parser.add_argument('--linux_flavor', help='Debian or RHEL', type=str)
+    parser.add_argument('--postgresql_version', help='12.18, to illustrate', type=str)
+    parser.add_argument('--python_version', help='3.10.3, for instance', type=str)
     args: argparse.Namespace = parser.parse_args()
-    print(type(args), type(args.action))
-    print(args.action, args.item, args.docker_image_sha256, args.python_version)
+    match args.action:
+        case 'compile':
+            match args.item:
+                case 'patroni':
+                    compile_patroni(args.docker_image_sha256, args.python_version)
+                case 'postgresql':
+                    compile_postgresql(args.linux_flavor, args.postgresql_version)
+        case 'install':
+            return 'install'
+    
 
 
 def compile_pgbackrest(linux_flavor: str, pgbackrest_version: str) -> None:
